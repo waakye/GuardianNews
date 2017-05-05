@@ -1,8 +1,10 @@
 package com.waakye.guardiannews;
 
+import android.app.LoaderManager;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Intent;
+import android.content.Loader;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -12,7 +14,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderCallbacks<List<NewsArticle>> {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -20,9 +22,14 @@ public class MainActivity extends AppCompatActivity {
     private static final String GUARDIAN_REQUEST_URL
         = "http://content.guardianapis.com/search?q=debate&tag=politics/politics&from-date=2014-01-01&api-key=test";
 
+    /**
+     * Constant value for the news article loader ID
+     */
+    private static final int NEWS_ARTICLE_LOADER_ID = 1;
+
     /** Adapter for the list of news articles */
     private NewsArticleAdapter mAdapter;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,46 +65,35 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Start the AsyncTask to fetch the news article data
-        NewsArticleAsyncTask task = new NewsArticleAsyncTask();
-        task.execute(GUARDIAN_REQUEST_URL);
+        // Get a reference to the LoaderManager, in order to interact with loaders
+        LoaderManager loaderManager = getLoaderManager();
+
+        // Initialize the loader
+        loaderManager.initLoader(NEWS_ARTICLE_LOADER_ID, null, this);
     }
 
-    private class NewsArticleAsyncTask extends AsyncTask<String, Void, List<NewsArticle>> {
+    @Override
+    public Loader<List<NewsArticle>> onCreateLoader(int id, Bundle bundle) {
+        // Create a new loader for the given URL
+        return new NewsArticleLoader(this, GUARDIAN_REQUEST_URL);
+    }
 
-        /**
-         * This method runs on the background thread and performs the network request.  We should
-         * not update the UI from the background thread so we return a list of {@link NewsArticle}s
-         * as a result
-         */
-        @Override
-        protected List<NewsArticle> doInBackground(String... urls) {
-            // Don't perform the request if there are no URLs, or the first URL is null
-            if (urls.length < 1 || urls[0] == null) {
-                return null;
-            }
+    @Override
+    public void onLoadFinished(Loader<List<NewsArticle>> loader, List<NewsArticle> data) {
+        // Clear the adapter of previous news article data
+        mAdapter.clear();
 
-            List<NewsArticle> results = QueryUtils.fetchNewsArticleData(urls[0]);
-            return results;
-        }
-
-        /**
-         * This method runs on the main UI thread after the background work has been completed.
-         * This method receives input from the doInBackground() method.  First, we clear out the
-         * adapter, to eliminate the data from a previous query to the Guardian API.  Then we
-         * update the adapter with the new list of articles, which will trigger the ListView to
-         * re-populate its list items.
-         */
-        @Override
-        protected void onPostExecute(List<NewsArticle> data) {
-            // Clear the adapter of previous news articles
-            mAdapter.clear();
-
-            // If there is a valid list of {@link NewsArticle}s, then add them to the adapter's
-            // data set.  This will trigger the ListView to update.
-            if (data != null && !data.isEmpty()) {
-                mAdapter.addAll(data);
-            }
+        // If there is a valid list of {@link NewsArticle}s, then add them to the adapter's data
+        // set. This will trigger the ListView to update
+        if (data != null && !data.isEmpty()) {
+            mAdapter.addAll(data);
         }
     }
+
+    @Override
+    public void onLoaderReset(Loader<List<NewsArticle>> loader) {
+        // Loader reset, so we can clear out our existing data
+        mAdapter.clear();
+    }
+
 }
