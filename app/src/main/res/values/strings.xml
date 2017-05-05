@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name">GuardianNews</string>
+    <string name="app_name">The Guardian News Search</string>
+    <string name="prompt">Enter a keyword or phrase</string>
+    <string name="search_button">Start Search</string>
+    <string name="find_articles">Find Great Articles</string>
 </resources>
