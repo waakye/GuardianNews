@@ -52,8 +52,14 @@ public final class QueryUtils {
                 // Get the section appropriate for the article
                 String section = currentArticle.getString("sectionName");
 
+                // Get the webUrl for the article
+                String url = currentArticle.getString("webUrl");
+
+                // Get the publication date of the article
+                String publicationDate = currentArticle.getString("webPublicationDate");
+
                 // Create a NewsArticle object
-                NewsArticle article = new NewsArticle(title, section);
+                NewsArticle article = new NewsArticle(title, section, url, publicationDate);
 
                 // Add NewsArticle object to list of news articles
                 newsArticles.add(article);

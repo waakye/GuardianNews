@@ -43,10 +43,15 @@ public class NewsArticleAdapter extends ArrayAdapter<NewsArticle> {
         // Display the title of the current article in that TextView
         articleTitleTextView.setText(currentNewsArticle.getWebTitle());
 
-        // Find the TextView the with view ID artilce_section
+        // Find the TextView the with view ID article_section
         TextView articleSectionTextView = (TextView)listItemView.findViewById(R.id.article_section);
         // Display the section of the current article in that TextView
         articleSectionTextView.setText(currentNewsArticle.getSectionName());
+
+        // Find the TextView with the view ID publication_date
+        TextView publicationDateTextView = (TextView)listItemView.findViewById(R.id.pubication_date);
+        // Display the date of the current article in that TextView
+        publicationDateTextView.setText(currentNewsArticle.getWebPublicationDate());
 
         // Return the list item view that now shows the appropriate data
         return listItemView;
