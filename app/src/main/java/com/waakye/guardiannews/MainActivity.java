@@ -13,12 +13,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Create a fake list of news article results
-        ArrayList<NewsArticle> newsArticles = new ArrayList<NewsArticle>();
-        newsArticles.add(new NewsArticle("10 Ways to Hike a Mountain", "Sports"));
-        newsArticles.add(new NewsArticle("10 Ways to Swim the English Channel", "Sports"));
-        newsArticles.add(new NewsArticle("10 Ways to Reduce Your Marathon Time", "Sports"));
-        newsArticles.add(new NewsArticle("10 Ways to Play Golf", "Sports"));
+        ArrayList<NewsArticle> newsArticles = QueryUtils.extractNewsArticles();
 
         // Find a reference to the {@link ListView} in the layout
         ListView newsArticlesListView = (ListView) findViewById(R.id.news_listview);
