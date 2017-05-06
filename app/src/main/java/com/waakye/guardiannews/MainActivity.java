@@ -7,11 +7,13 @@ import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -40,8 +42,13 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
     private String concatenated_search_terms = "";
 
+    private String guardian_query_url = "";
+
     /** Adapter for the list of news articles */
     private NewsArticleAdapter mAdapter;
+
+    /** TextView that is displayed when the list is empty */
+    private TextView mEmptyStateTextView;
 
     private String urlQueryString(String search_terms) {
         StringBuilder sb = new StringBuilder(GUARDIAN_PREFIX);
@@ -58,7 +65,9 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         setContentView(R.layout.activity_main);
 
         // Find a reference to the {@link ListView} in the layout
-        ListView newsArticlesListView = (ListView) findViewById(R.id.news_listview);
+        final ListView newsArticlesListView = (ListView) findViewById(R.id.news_listview);
+
+        mEmptyStateTextView = (TextView)findViewById(R.id.empty_view);
 
         // Create a new adapter that takes an empty list of news articles as input
         mAdapter = new NewsArticleAdapter(this, new ArrayList<NewsArticle>());
@@ -78,9 +87,17 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
                 // Tests whether anything was entered
                 if (search_terms.isEmpty()) {
                     Toast.makeText(MainActivity.this, "Nothing entered", Toast.LENGTH_SHORT).show();
+                    newsArticlesListView.setEmptyView(mEmptyStateTextView); // No results found
                 } else {
                     Toast.makeText(MainActivity.this, "Something entered", Toast.LENGTH_SHORT).show();
                 }
+
+                // Get a reference to the LoaderManager, in order to interact with loaders
+                LoaderManager loaderManager = getLoaderManager();
+
+                // Initialize the loader
+                loaderManager.initLoader(NEWS_ARTICLE_LOADER_ID, null, MainActivity.this);
+
             }
         });
 
@@ -105,21 +122,21 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
             }
         });
 
-        // Get a reference to the LoaderManager, in order to interact with loaders
-        LoaderManager loaderManager = getLoaderManager();
-
-        // Initialize the loader
-        loaderManager.initLoader(NEWS_ARTICLE_LOADER_ID, null, this);
     }
 
     @Override
     public Loader<List<NewsArticle>> onCreateLoader(int id, Bundle bundle) {
+        Log.i(LOG_TAG, "TEST: MainActivity onCreateLoader() called... ");
+        guardian_query_url = urlQueryString(search_terms);
+
         // Create a new loader for the given URL
-        return new NewsArticleLoader(this, GUARDIAN_REQUEST_URL);
+        return new NewsArticleLoader(this, guardian_query_url);
     }
 
     @Override
     public void onLoadFinished(Loader<List<NewsArticle>> loader, List<NewsArticle> data) {
+        Log.i(LOG_TAG, "TEST: MainActivity onLoadFinished() called... ");
+
         // Clear the adapter of previous news article data
         mAdapter.clear();
 
@@ -127,11 +144,15 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         // set. This will trigger the ListView to update
         if (data != null && !data.isEmpty()) {
             mAdapter.addAll(data);
+        } else {
+            mEmptyStateTextView.setText(R.string.no_results_found);
         }
     }
 
     @Override
     public void onLoaderReset(Loader<List<NewsArticle>> loader) {
+        Log.i(LOG_TAG, "TEST: MainActivity onLoaderReset() called... ");
+
         // Loader reset, so we can clear out our existing data
         mAdapter.clear();
     }
