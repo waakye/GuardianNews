@@ -3,4 +3,5 @@
     <string name="prompt">Enter a keyword or phrase</string>
     <string name="search_button">Start Search</string>
     <string name="find_articles">Find Great Articles</string>
+    <string name="section">Section: </string>
 </resources>

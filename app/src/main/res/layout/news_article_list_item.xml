@@ -14,12 +14,27 @@
         android:layout_weight="1"
         tools:text="How to Land a Job in 10 Minutes"/>
 
-    <TextView
-        android:id="@+id/article_section"
+    <LinearLayout
+        android:layout_marginTop="@dimen/after_headline"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        tools:text="Features"/>
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="@string/section"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/article_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/tab"
+            android:textStyle="bold"
+            tools:text="Features"/>
+
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/publication_date"
