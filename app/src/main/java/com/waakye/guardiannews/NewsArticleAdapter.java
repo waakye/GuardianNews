@@ -124,7 +124,7 @@ public class NewsArticleAdapter extends ArrayAdapter<NewsArticle> {
 
 
         // Find the TextView with the view ID publication_date
-        TextView publicationDateTextView = (TextView)listItemView.findViewById(R.id.pubication_date);
+        TextView publicationDateTextView = (TextView)listItemView.findViewById(R.id.publication_date);
         // Display the date of the current article in that TextView
         publicationDateTextView.setText(secondaryDate);
 

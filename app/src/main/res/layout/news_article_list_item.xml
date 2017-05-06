@@ -22,7 +22,7 @@
         tools:text="Features"/>
 
     <TextView
-        android:id="@+id/pubication_date"
+        android:id="@+id/publication_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"/>
