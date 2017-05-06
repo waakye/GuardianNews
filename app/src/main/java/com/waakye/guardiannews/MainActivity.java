@@ -2,8 +2,11 @@ package com.waakye.guardiannews;
 
 import android.app.LoaderManager;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,23 +79,43 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
             public void onClick(View v) {
 
                 // Get input from the EditText
-                EditText searchTerms = (EditText)findViewById(R.id.edit_text_search_terms);
+                EditText searchTerms = (EditText) findViewById(R.id.edit_text_search_terms);
                 search_terms = searchTerms.getText().toString();
 
                 // Tests whether anything was entered
                 if (search_terms.isEmpty()) {
-                    Toast.makeText(MainActivity.this, "Nothing entered", Toast.LENGTH_SHORT).show();
                     newsArticlesListView.setEmptyView(mEmptyStateTextView); // No results found
-                } else {
-                    Toast.makeText(MainActivity.this, "Something entered", Toast.LENGTH_SHORT).show();
                 }
 
-                // Get a reference to the LoaderManager, in order to interact with loaders
-                LoaderManager loaderManager = getLoaderManager();
+                // Get a reference to the ConnectivityManager to check the state of network connectivity
+                ConnectivityManager connectivityManager = (ConnectivityManager)
+                        getSystemService(Context.CONNECTIVITY_SERVICE);
 
-                // Initialize the loader
-                loaderManager.initLoader(NEWS_ARTICLE_LOADER_ID, null, MainActivity.this);
+                // Get details on the currently active default data network
+                NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
+                // If there is a network connection, fetch data
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    // Get a reference to the LoaderManager, in order to interact with loaders
+                    LoaderManager loaderManager = getLoaderManager();
+
+                    // Initialize the loader.  Pass in the int ID constant defined above and
+                    // pass in null for the bundle
+                    loaderManager.initLoader(NEWS_ARTICLE_LOADER_ID, null, MainActivity.this);
+                    // Check to see if there is already a loader
+                    if (getLoaderManager().getLoader(NEWS_ARTICLE_LOADER_ID).isStarted()) {
+                        // restart the loader if it already exists
+                        getLoaderManager().restartLoader(NEWS_ARTICLE_LOADER_ID, null, MainActivity.this);
+                    }
+                } else {
+                    // Otherwise, display error
+                    // First, hide the loading indicator so error message will be visible
+                    View loadingIndicator = findViewById(R.id.loading_indicator);
+                    loadingIndicator.setVisibility(View.GONE);
+
+                    // Update empty state with no connection error message
+                    mEmptyStateTextView.setText(R.string.no_internet_connection);
+                }
             }
         });
 
