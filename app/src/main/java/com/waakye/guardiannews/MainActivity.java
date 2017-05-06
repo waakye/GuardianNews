@@ -22,13 +22,32 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     private static final String GUARDIAN_REQUEST_URL
         = "http://content.guardianapis.com/search?q=debate&tag=politics/politics&from-date=2014-01-01&api-key=test";
 
+    /** URL search prefix from the Guardian website */
+    private static final String GUARDIAN_PREFIX
+            = "http://content.guardianapis.com/search?q=";
+
+    private static final String API_TEST_KEY = "&api-key=test";
+
     /**
      * Constant value for the news article loader ID
      */
     private static final int NEWS_ARTICLE_LOADER_ID = 1;
 
+    public String search_terms = "";
+
+    private String concatenated_search_terms = "";
+
     /** Adapter for the list of news articles */
     private NewsArticleAdapter mAdapter;
+
+    private String urlQueryString(String search_terms) {
+        StringBuilder sb = new StringBuilder(GUARDIAN_PREFIX);
+        concatenated_search_terms = search_terms.trim().replace(" ", "+");
+        sb.append(concatenated_search_terms);
+        sb.append(API_TEST_KEY);
+        String builtString = sb.toString();
+        return builtString;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
