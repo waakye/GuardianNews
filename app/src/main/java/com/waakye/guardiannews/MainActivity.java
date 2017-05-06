@@ -23,10 +23,6 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    /** URL for article data from the Guardian dataset */
-    private static final String GUARDIAN_REQUEST_URL
-        = "http://content.guardianapis.com/search?q=debate&tag=politics/politics&from-date=2014-01-01&api-key=test";
-
     /** URL search prefix from the Guardian website */
     private static final String GUARDIAN_PREFIX
             = "http://content.guardianapis.com/search?q=";
@@ -136,6 +132,10 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     @Override
     public void onLoadFinished(Loader<List<NewsArticle>> loader, List<NewsArticle> data) {
         Log.i(LOG_TAG, "TEST: MainActivity onLoadFinished() called... ");
+
+        // Hide loading indicator because the data has been loaded
+        View loadingIndicator = findViewById(R.id.loading_indicator);
+        loadingIndicator.setVisibility(View.GONE);
 
         // Clear the adapter of previous news article data
         mAdapter.clear();
