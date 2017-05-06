@@ -9,7 +9,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +66,24 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         // Set the adapter on the {@link ListView} so that the list can be populated in the
         // user interface
         newsArticlesListView.setAdapter(mAdapter);
+
+        Button searchButton = (Button)findViewById(R.id.search_button);
+        searchButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+
+                // Get input from the EditText
+                EditText searchTerms = (EditText)findViewById(R.id.edit_text_search_terms);
+                search_terms = searchTerms.getText().toString();
+
+                // Tests whether anything was entered
+                if (search_terms.isEmpty()) {
+                    Toast.makeText(MainActivity.this, "Nothing entered", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Something entered", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
 
         // Set an item click listener on the ListView, which sends an intent to a web browser
         // to open a website with more information about the selected article
